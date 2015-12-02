@@ -11,11 +11,10 @@ int main(int argc, char *argv[])
 {
 
 	string fileName;
-	double lat,longit,alt,x,y,z;
 
 	fileName = argv[1];
 
-	convert_and_save(read_gps_list(fileName));
+	GPS_Utils::convert_and_save(GPS_Utils::read_gps_list(fileName));
 
 
 	return 0;
