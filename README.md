@@ -7,7 +7,7 @@ required input:
 
 list of GPS for each camera
 
-bundle.out file (See Bundler https://github.com/bundler/bundler)
+bundle.out file (See Bundler https://github.com/snavely/bundler_sfm  http://www.cs.cornell.edu/~snavely/bundler/bundler-v0.3-manual.html VI)
 
 - Dependencies:
 
