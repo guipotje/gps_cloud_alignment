@@ -11,4 +11,4 @@ bundle.out file format (http://www.cs.cornell.edu/~snavely/bundler/bundler-v0.3-
 
 - Dependencies:
 
-  PCL 
+  PCL library
