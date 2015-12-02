@@ -10,6 +10,6 @@ Required input:
 - Camera poses and 3D points in bundle.out file format (http://www.cs.cornell.edu/~snavely/bundler/bundler-v0.3-manual.html item VI)
 
 -----------------
-- Dependencies:
+Dependencies:
 
-  PCL library
+- PCL library
