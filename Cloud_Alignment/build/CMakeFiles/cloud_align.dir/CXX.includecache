@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/gps_utils.cpp
+/home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/gps_utils.cpp
 gps_utils.h
-/home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/gps_utils.h
+/home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/gps_utils.h
 
-/home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/gps_utils.h
+/home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/gps_utils.h
 math.h
 -
 vector

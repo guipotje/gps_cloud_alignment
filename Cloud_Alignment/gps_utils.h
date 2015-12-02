@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class LLA
+class LLA //Latitude, Longitude and Altitude struct
 {
 	public:
 	double lat,longit,alt;

@@ -1,6 +1,6 @@
 #include "gps_utils.h"
 
-void ecef2lla(Point3D ecef, LLA &lla)
+void ecef2lla(Point3D ecef, LLA &lla) /*Converts ECEF to Latitude Longitude and Altitude*/
 {
   double x = ecef.X;
   double y = ecef.Y;
@@ -30,7 +30,7 @@ void ecef2lla(Point3D ecef, LLA &lla)
 }
 
 
-void lla2ecef(LLA lla, Point3D &ret)
+void lla2ecef(LLA lla, Point3D &ret) /*Converts Latitude Longitude and Altitude to ECEF*/
 {
   double lat = lla.lat*(M_PI/180.0);
   double lon = lla.longit*(M_PI/180.0);
@@ -85,7 +85,7 @@ static char ply_header[] =
 "end_header\n";
 long num_points_out = gps_list.size();
 
-FILE *f = fopen("/home/vnc/Dropbox/Projetos/PLYs/GPS_bundle_out.ply", "w");
+FILE *f = fopen("GPS_bundle_out.ply", "w");
 
 
     /* Print the ply header */

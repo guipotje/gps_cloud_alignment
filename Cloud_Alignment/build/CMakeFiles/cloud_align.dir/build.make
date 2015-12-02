@@ -31,14 +31,14 @@ CMAKE_COMMAND = /usr/bin/cmake
 # The command to remove a file.
 RM = /usr/bin/cmake -E remove -f
 
-# The program to use to edit the cache.
-CMAKE_EDIT_COMMAND = /usr/bin/ccmake
+# Escaping for special characters.
+EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment
+CMAKE_SOURCE_DIR = /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build
+CMAKE_BINARY_DIR = /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/cloud_align.dir/depend.make
@@ -51,17 +51,17 @@ include CMakeFiles/cloud_align.dir/flags.make
 
 CMakeFiles/cloud_align.dir/main.cpp.o: CMakeFiles/cloud_align.dir/flags.make
 CMakeFiles/cloud_align.dir/main.cpp.o: ../main.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/cloud_align.dir/main.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/cloud_align.dir/main.cpp.o -c /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/main.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/cloud_align.dir/main.cpp.o -c /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/main.cpp
 
 CMakeFiles/cloud_align.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cloud_align.dir/main.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/main.cpp > CMakeFiles/cloud_align.dir/main.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/main.cpp > CMakeFiles/cloud_align.dir/main.cpp.i
 
 CMakeFiles/cloud_align.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cloud_align.dir/main.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/main.cpp -o CMakeFiles/cloud_align.dir/main.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/main.cpp -o CMakeFiles/cloud_align.dir/main.cpp.s
 
 CMakeFiles/cloud_align.dir/main.cpp.o.requires:
 .PHONY : CMakeFiles/cloud_align.dir/main.cpp.o.requires
@@ -74,17 +74,17 @@ CMakeFiles/cloud_align.dir/main.cpp.o.provides.build: CMakeFiles/cloud_align.dir
 
 CMakeFiles/cloud_align.dir/gps_utils.cpp.o: CMakeFiles/cloud_align.dir/flags.make
 CMakeFiles/cloud_align.dir/gps_utils.cpp.o: ../gps_utils.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build/CMakeFiles $(CMAKE_PROGRESS_2)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build/CMakeFiles $(CMAKE_PROGRESS_2)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/cloud_align.dir/gps_utils.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/cloud_align.dir/gps_utils.cpp.o -c /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/gps_utils.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/cloud_align.dir/gps_utils.cpp.o -c /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/gps_utils.cpp
 
 CMakeFiles/cloud_align.dir/gps_utils.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cloud_align.dir/gps_utils.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/gps_utils.cpp > CMakeFiles/cloud_align.dir/gps_utils.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/gps_utils.cpp > CMakeFiles/cloud_align.dir/gps_utils.cpp.i
 
 CMakeFiles/cloud_align.dir/gps_utils.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cloud_align.dir/gps_utils.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/gps_utils.cpp -o CMakeFiles/cloud_align.dir/gps_utils.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/gps_utils.cpp -o CMakeFiles/cloud_align.dir/gps_utils.cpp.s
 
 CMakeFiles/cloud_align.dir/gps_utils.cpp.o.requires:
 .PHONY : CMakeFiles/cloud_align.dir/gps_utils.cpp.o.requires
@@ -123,6 +123,6 @@ CMakeFiles/cloud_align.dir/clean:
 .PHONY : CMakeFiles/cloud_align.dir/clean
 
 CMakeFiles/cloud_align.dir/depend:
-	cd /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build/CMakeFiles/cloud_align.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build/CMakeFiles/cloud_align.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/cloud_align.dir/depend
 

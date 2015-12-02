@@ -1,4 +1,4 @@
-# Install script for directory: /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment
+# Install script for directory: /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -38,7 +38,7 @@ ELSE(CMAKE_INSTALL_COMPONENT)
   SET(CMAKE_INSTALL_MANIFEST "install_manifest.txt")
 ENDIF(CMAKE_INSTALL_COMPONENT)
 
-FILE(WRITE "/home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build/${CMAKE_INSTALL_MANIFEST}" "")
+FILE(WRITE "/home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build/${CMAKE_INSTALL_MANIFEST}" "")
 FOREACH(file ${CMAKE_INSTALL_MANIFEST_FILES})
-  FILE(APPEND "/home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
+  FILE(APPEND "/home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
 ENDFOREACH(file)

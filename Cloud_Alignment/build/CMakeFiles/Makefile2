@@ -43,14 +43,14 @@ CMAKE_COMMAND = /usr/bin/cmake
 # The command to remove a file.
 RM = /usr/bin/cmake -E remove -f
 
-# The program to use to edit the cache.
-CMAKE_EDIT_COMMAND = /usr/bin/ccmake
+# Escaping for special characters.
+EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment
+CMAKE_SOURCE_DIR = /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build
+CMAKE_BINARY_DIR = /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build
 
 #=============================================================================
 # Target rules for target CMakeFiles/cloud_align.dir
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build
 CMakeFiles/cloud_align.dir/all:
 	$(MAKE) -f CMakeFiles/cloud_align.dir/build.make CMakeFiles/cloud_align.dir/depend
 	$(MAKE) -f CMakeFiles/cloud_align.dir/build.make CMakeFiles/cloud_align.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build/CMakeFiles  1 2
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build/CMakeFiles  1 2
 	@echo "Built target cloud_align"
 .PHONY : CMakeFiles/cloud_align.dir/all
 
@@ -69,9 +69,9 @@ all: CMakeFiles/cloud_align.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/cloud_align.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build/CMakeFiles 2
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/cloud_align.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/guipotje/Sources/gps_cloud_alignment/Cloud_Alignment/build/CMakeFiles 0
 .PHONY : CMakeFiles/cloud_align.dir/rule
 
 # Convenience name for target.
