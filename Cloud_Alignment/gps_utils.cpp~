@@ -1,0 +1,49 @@
+#include "gps_utils.h"
+
+void ecef2lla(Point3D ecef, LLA &lla)
+{
+  double x = ecef.X;
+  double y = ecef.Y;
+  double z = ecef.Z;
+
+  double b = sqrt( asq * (1-esq) );
+  double bsq = pow(b,2);
+  double ep = sqrt( (asq - bsq)/bsq);
+  double p = sqrt( pow(x,2) + pow(y,2) );
+  double th = atan2(a*z, b*p);
+
+  double lon = atan2(y,x);
+  double lat = atan2( (z + pow(ep,2)*b*pow(sin(th),3) ), (p - esq*a*pow(cos(th),3)) );
+  double N = a/( sqrt(1-esq*pow(sin(lat),2)) );
+  double alt = p / cos(lat) - N;
+
+  // mod lat to 0-2M_PI
+   //lon = lon % (2*M_PI);
+  lon = fmod(lon,2*M_PI);
+  // correction for altitude near poles left out.
+
+  lla.lat = lat*(180.0/M_PI);
+  lla.longit = lon*(180.0/M_PI);
+  lla.alt = alt;
+
+
+}
+
+
+void lla2ecef(LLA lla, Point3D &ret)
+{
+  double lat = lla.lat*(M_PI/180.0);
+  double lon = lla.longit*(M_PI/180.0);
+  double alt = lla.alt*(M_PI/180.0);
+
+  double N = a / sqrt(1 - esq * pow(sin(lat),2) );
+  
+  double x = (N+alt) * cos(lat) * cos(lon);
+  double y = (N+alt) * cos(lat) * sin(lon);
+  double z = ((1-esq) * N + alt) * sin(lat);
+
+  ret.X = x;
+  ret.Y = y;
+  ret.Z = z;
+
+}

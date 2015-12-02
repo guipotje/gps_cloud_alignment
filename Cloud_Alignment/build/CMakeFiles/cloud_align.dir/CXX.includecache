@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/gps_utils.cpp
+gps_utils.h
+/home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/gps_utils.h
+
+/home/vnc/Dropbox/Projetos/Guilherme/Cloud_Alignment/gps_utils.h
+math.h
+-
+vector
+-
+fstream
+-
+sstream
+-
+
