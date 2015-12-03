@@ -275,8 +275,8 @@ namespace pointcloud_utils
    void transform_cameras(Eigen::Matrix4f T, double s, vector<Point3D> &cameras)
    {
 
-       pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cameras (new pcl::PointCloud<pcl::PointXYZ>);
-       pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cameras_t (new pcl::PointCloud<pcl::PointXYZ>);
+       pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cameras (new pcl::PointCloud<pcl::PointXYZ>());
+       pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cameras_t (new pcl::PointCloud<pcl::PointXYZ>());
 
        for (size_t i = 0; i < cameras.size (); ++i)
        {
@@ -294,9 +294,11 @@ namespace pointcloud_utils
            cameras[i].Y = pcl_cameras_t->points[i].y;
            cameras[i].Z = pcl_cameras_t->points[i].z;
 
-         //  cout<<"Point "<< i << " :"<<pcl_cameras->points[i]<<endl;
+          cout<<"Point "<< i+1 << " :"<<pcl_cameras_t->points[i]<<endl;
 
        }
+
+       cout<<T.transpose()<<endl;
 
    }
 
