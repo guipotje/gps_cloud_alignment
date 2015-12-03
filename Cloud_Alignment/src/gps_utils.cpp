@@ -3,7 +3,7 @@
 
 namespace GPS_Utils
 {
-    void ecef2lla(Point3D ecef, LLA &lla) /*Converts ECEF to Latitude Longitude and Altitude*/
+    void ecef2lla(pointcloud_utils::Point3D ecef, LLA &lla) /*Converts ECEF to Latitude Longitude and Altitude*/
     {
       double x = ecef.X;
       double y = ecef.Y;
@@ -33,7 +33,7 @@ namespace GPS_Utils
     }
 
 
-    void lla2ecef(LLA lla, Point3D &ret) /*Converts Latitude Longitude and Altitude to ECEF*/
+    void lla2ecef(LLA lla, pointcloud_utils::Point3D &ret) /*Converts Latitude Longitude and Altitude to ECEF*/
     {
       double lat = lla.lat*(M_PI/180.0);
       double lon = lla.longit*(M_PI/180.0);
@@ -71,7 +71,38 @@ namespace GPS_Utils
         return gps_list;
     }
 
-    void convert_and_save(vector<LLA> gps_list)
+
+    vector<pointcloud_utils::Point3D> convert_XYZ (vector<LLA> gps_list)
+    {
+        vector<pointcloud_utils::Point3D> gps_xyz;
+
+        for(unsigned int i=0;i<gps_list.size();i++)
+        {
+            pointcloud_utils::Point3D pt3d;
+            lla2ecef(gps_list[i],pt3d);
+            gps_xyz.push_back(pt3d);
+
+        }
+
+        return gps_xyz;
+    }
+
+    vector<LLA> convert_LLA(vector<pointcloud_utils::Point3D> pts_xyz)
+    {
+        vector<LLA> gps_list;
+
+        for(unsigned int i=0;i<pts_xyz.size();i++)
+        {
+            LLA gps;
+            ecef2lla(pts_xyz[i],gps);
+            gps_list.push_back(gps);
+
+        }
+
+        return gps_list;
+    }
+
+    void save(vector<pointcloud_utils::Point3D> gps_list)
     {
     static char ply_header[] =
     "ply\n"
@@ -98,8 +129,8 @@ namespace GPS_Utils
 
         for(unsigned int i=0;i<gps_list.size();i++)
         {
-            Point3D pt3d;
-            lla2ecef(gps_list[i],pt3d);
+            pointcloud_utils::Point3D pt3d = gps_list[i];
+
 
             fprintf(f,"%.12f %.12f %.12f 0 255 0\n",pt3d.X, pt3d.Y, pt3d.Z);
 

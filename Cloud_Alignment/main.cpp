@@ -7,14 +7,35 @@
 
 
 
+
 int main(int argc, char *argv[])
 {
 
-	string fileName;
+    string gps;
+    string cams;
 
-	fileName = argv[1];
+    gps = argv[1];
+    cams = argv[2];
 
-	GPS_Utils::convert_and_save(GPS_Utils::read_gps_list(fileName));
+
+    /*TEST - generate an initial ply for both GPS and camera positions*/
+    GPS_Utils::save(GPS_Utils::convert_XYZ(GPS_Utils::read_gps_list(gps)));
+    pointcloud_utils::save_ply(pointcloud_utils::read_camera_list(cams));
+
+
+    /*aligning clouds*/
+
+    vector<pointcloud_utils::Point3D> cloud_gps;
+    vector<pointcloud_utils::Point3D> cloud_cam;
+    double scale;
+    Eigen::Matrix4f T;
+
+    cloud_cam = pointcloud_utils::read_camera_list(cams);
+    cloud_gps = GPS_Utils::convert_XYZ(GPS_Utils::read_gps_list(gps));
+
+    pointcloud_utils::register_clouds(cloud_cam, cloud_gps,T,scale);
+    pointcloud_utils::transform_cameras(T,scale,cloud_cam);
+
 
 
 	return 0;

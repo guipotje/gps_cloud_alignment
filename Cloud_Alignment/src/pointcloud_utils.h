@@ -16,28 +16,71 @@
 #include <pcl/console/print.h>
 #include <pcl/console/parse.h>
 
+#include<vector>
+#include <fstream>
+#include <sstream>
+#include <math.h>
+#include <string>
+
+using namespace std;
+
+namespace pointcloud_utils
+{
+
+    class Point3D
+        {
+            public:
+            double X,Y,Z;
+
+            Point3D()
+            {
+            }
+
+            Point3D(double _X, double _Y, double _Z)
+            {
+             X = _X;
+             Y = _Y;
+             Z = _Z;
+            }
+
+        };
 
 
-
-#include "gps_utils.h"
-
-
-int RANSACRegister(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA, 
-            const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
-            Eigen::Matrix4f& Tresult);
+    int RANSACRegister(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA,
+                const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
+                Eigen::Matrix4f& Tresult);
 
 
-void ScaleRANSACRegisterEx(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA, 
-                    const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
-                    Eigen::Matrix4f& Tresult,
-                    double& in_out_s,
-                    int num_iterations,
-                    double iteration_scale_step);
+    void ScaleRANSACRegisterEx(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA,
+                        const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
+                        Eigen::Matrix4f& Tresult,
+                        double& in_out_s,
+                        int num_iterations,
+                        double iteration_scale_step);
 
 
-void ScaleRANSACRegister(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA, 
-                    const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
-                    Eigen::Matrix4f& Tresult,
-                    double& max_s,
-                    int num_iterations,
-                    double iteration_scale_step);
+    void ScaleRANSACRegister(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA,
+                        const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
+                        Eigen::Matrix4f& Tresult,
+                        double& max_s,
+                        int num_iterations,
+                        double iteration_scale_step);
+
+    double norm_L2(pcl::PointXYZ p1, pcl::PointXYZ p2);
+
+    double get_cloud_scale_pca(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA,
+                        const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
+                         bool update
+                        );
+
+    double get_cloud_scale(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA,
+                        const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
+                         bool update
+                        );
+
+     vector<Point3D> read_camera_list(string filename);
+     void save_ply(vector<Point3D> cam_list);
+     void register_clouds(vector<Point3D> pcl_CAM, vector<Point3D> pcl_GPS, Eigen::Matrix4f& T, double &scale);
+     void transform_cameras(Eigen::Matrix4f T, double s, vector<Point3D> &cameras);
+
+}

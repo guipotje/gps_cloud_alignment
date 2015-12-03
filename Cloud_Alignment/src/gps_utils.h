@@ -2,11 +2,10 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-
+#include "pointcloud_utils.h"
 
 
 using namespace std;
-
 
 namespace GPS_Utils
 {
@@ -28,24 +27,6 @@ namespace GPS_Utils
 
 	};
 
-	class Point3D
-	{
-		public:
-		double X,Y,Z;
-
-		Point3D()
-		{
-		}
-
-		Point3D(double _X, double _Y, double _Z)
-		{
-		 X = _X;
-		 Y = _Y;
-		 Z = _Z;
-		}
-
-	};
-
 
 	// WGS84 ellipsoid constants
 	const double a = 6378137; // radius
@@ -56,11 +37,14 @@ namespace GPS_Utils
 
 
 
-	void ecef2lla(Point3D ecef, LLA &lla);
-	void lla2ecef(LLA lla, Point3D &ret);
+    void ecef2lla(pointcloud_utils::Point3D ecef, LLA &lla);
+    void lla2ecef(LLA lla, pointcloud_utils::Point3D &ret);
 	vector<LLA> read_gps_list(string filename);
-	void convert_and_save(vector<LLA> gps_list);
+    vector<pointcloud_utils::Point3D> convert_XYZ (vector<LLA> gps_list);
+    vector<LLA> convert_LLA(vector<pointcloud_utils::Point3D> pts_xyz);
+    void save(vector<pointcloud_utils::Point3D> gps_list);
 
-};
+
+}
 
 
