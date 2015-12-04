@@ -78,9 +78,9 @@ namespace pointcloud_utils
                          bool update
                         );
 
-     vector<Point3D> read_camera_list(string filename);
+     vector<Point3D> read_point_list(string filename);
      void save_ply(vector<Point3D> cam_list);
      void register_clouds(vector<Point3D> pcl_CAM, vector<Point3D> pcl_GPS, Eigen::Matrix4f& T, double &scale);
-     void transform_cameras(Eigen::Matrix4f T, double s, vector<Point3D> &cameras);
+     void transform_points(Eigen::Matrix4f T, double s, vector<Point3D> &cameras);/*transform points given an affine T matrix*/
 
 }

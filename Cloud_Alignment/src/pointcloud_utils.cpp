@@ -176,7 +176,7 @@ namespace pointcloud_utils
     }
 
 
-    vector<Point3D> read_camera_list(string filename)
+    vector<Point3D> read_point_list(string filename)
     {
         vector<Point3D> cam_list;
 
@@ -272,7 +272,7 @@ namespace pointcloud_utils
    }
 
 
-   void transform_cameras(Eigen::Matrix4f T, double s, vector<Point3D> &cameras)
+   void transform_points(Eigen::Matrix4f T, double s, vector<Point3D> &cameras)
    {
 
        pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cameras (new pcl::PointCloud<pcl::PointXYZ>());
@@ -284,7 +284,7 @@ namespace pointcloud_utils
 
        }
 
-       pcl::transformPointCloud(*pcl_cameras, *pcl_cameras_t, T);
+       pcl::transformPointCloud(*pcl_cameras, *pcl_cameras_t, T.transpose());
 
 
 
