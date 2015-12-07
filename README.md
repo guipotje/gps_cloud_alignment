@@ -1,13 +1,19 @@
 # gps_cloud_alignment
 
 
-This code geo-references the output of a Structure-from-Motion algorithm using GPS information.
+This code geo-references the points output of a Structure-from-Motion algorithm using GPS information.
 
 Required input:
 
-- list of GPS for each camera
+A file where each line contains:
 
-- Camera poses and 3D points in bundle.out file format (http://www.cs.cornell.edu/~snavely/bundler/bundler-v0.3-manual.html item VI)
+- list of GPS for each camera (Latitude Longitude Altitude)
+- list of 3D poisition for each camera (X Y Z) in the local frame
+- list of 3D points (X Y Z) in the local frame
+- 
+Output:
+- list of GPS for each point (Latitude Longitude  Altitude)
+
 
 -----------------
 Dependencies:
