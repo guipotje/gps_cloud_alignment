@@ -14,7 +14,7 @@ namespace pointcloud_utils
         pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(sac_model);
         //pcl::LeastMedianSquares<pcl::PointXYZ> ransac(sac_model); //might as well try these out too!
         //pcl::ProgressiveSampleConsensus<pcl::PointXYZ> ransac(sac_model);
-        ransac.setDistanceThreshold(5.0);
+        ransac.setDistanceThreshold(8.0);
 
         //upping the verbosity level to see some info
         pcl::console::VERBOSITY_LEVEL vblvl = pcl::console::getVerbosityLevel();
@@ -160,7 +160,7 @@ namespace pointcloud_utils
           //s/=c; //use mean
 
           std::sort(scales.begin(),scales.end());
-          s = scales[scales.size()/2 -1]; //use median
+          s = scales[scales.size()/2]; //use median
 
         if(update)
           for(size_t i = 0; i< cloudA->points.size();i++)
