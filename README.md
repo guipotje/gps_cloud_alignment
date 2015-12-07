@@ -1,7 +1,7 @@
 # gps_cloud_alignment
 
 
-This code geo-references the points output of a Structure-from-Motion algorithm using GPS information.
+This code geo-references the points output by a Structure-from-Motion algorithm using GPS information.
 
 Required input:
 
