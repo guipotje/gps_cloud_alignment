@@ -141,4 +141,18 @@ namespace GPS_Utils
 
     }
 
-}
+    void save_LLA(vector<LLA> lla_list)
+    {
+         FILE *f = fopen("points_lat_lon_alt.txt", "w");
+
+         for(unsigned int i=0; i<lla_list.size();i++)
+            fprintf(f,"%.12f %.12f %.12f\n",lla_list[i].lat, lla_list[i].longit, lla_list[i].alt);
+
+         fclose(f);
+
+
+    }
+
+
+}//END NAMESPACE
+

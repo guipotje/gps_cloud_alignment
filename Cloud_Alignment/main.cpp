@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     Eigen::Matrix4f T;
 
     cloud_cam = pointcloud_utils::read_point_list(cams); //reading cameras
-    cloud_points = pointcloud_utils::read_point_list(cams); //reading DEM points
+    cloud_points = pointcloud_utils::read_point_list(points); //reading DEM points
     cloud_gps = GPS_Utils::convert_XYZ(GPS_Utils::read_gps_list(gps)); //reading GPS and converting to ECEF xyz
     pointcloud_utils::register_clouds(cloud_cam, cloud_gps,T,scale); //registering the model frame to the ECEF frame
 
@@ -43,7 +43,8 @@ int main(int argc, char *argv[])
     pointcloud_utils::transform_points(T,scale,cloud_cam);
     pointcloud_utils::transform_points(T,scale,cloud_points);
 
-
+    /*saves lat long and alt for each 3D point*/
+    GPS_Utils::save_LLA(GPS_Utils::convert_LLA(cloud_points));
 
 	return 0;
 }

@@ -294,7 +294,7 @@ namespace pointcloud_utils
            cameras[i].Y = pcl_cameras_t->points[i].y;
            cameras[i].Z = pcl_cameras_t->points[i].z;
 
-          cout<<"Point "<< i+1 << " :"<<pcl_cameras_t->points[i]<<endl;
+          //cout<<"Point "<< i+1 << " :"<<pcl_cameras_t->points[i]<<endl;
 
        }
 

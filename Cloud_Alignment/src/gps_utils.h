@@ -43,6 +43,7 @@ namespace GPS_Utils
     vector<pointcloud_utils::Point3D> convert_XYZ (vector<LLA> gps_list);
     vector<LLA> convert_LLA(vector<pointcloud_utils::Point3D> pts_xyz);
     void save(vector<pointcloud_utils::Point3D> gps_list);
+    void save_LLA(vector<LLA> lla_list);
 
 
 }
