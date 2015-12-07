@@ -5,7 +5,7 @@ This code geo-references the points output by a Structure-from-Motion algorithm 
 
 Required input:
 
-A file where each line contains:
+3 files where each line of each respective file contains:
 
 - list of GPS for each camera (Latitude Longitude Altitude)
 - list of 3D poisition for each camera (X Y Z) in the local frame
