@@ -7,9 +7,9 @@ Required input:
 
 3 files where each line of each respective file contains:
 
-- list of GPS for each camera (Latitude Longitude Altitude)
-- list of 3D poisition for each camera (X Y Z) in the local frame
-- list of 3D points (X Y Z) in the local frame
+- GPS for each camera (Latitude Longitude Altitude)
+- 3D poisition for each camera (X Y Z) in the local frame
+- 3D points (X Y Z) in the local frame
 
 Output:
 - list of GPS for each point (Latitude Longitude  Altitude)
