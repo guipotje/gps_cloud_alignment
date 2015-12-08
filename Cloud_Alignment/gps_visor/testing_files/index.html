@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GPS comparison</title>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+   <script>
+   console.log("aaa");
+	$(document).ready(function() {
+
+			console.log("aaa");		
+
+    	$(window).load(function (){
+    		var left_frame = window.parent.frames[0];
+    		var right_frame = window.parent.frames[1];
+
+    		console.log("left:" + left_frame);
+   //      	window.parent.frames[0].google.maps.event.addListener(document.getElementById("left_frame").contentWindow.google.map, 'bounds_changed', (function () {
+		 //    	document.getElementById("right_frame").contentWindow.map.setCenter(document.getElementById("left_frame").contentWindow.map.getCenter());
+			// }));
+    	});
+	});
+
+ //   	document.getElementById("left_frame").contentWindow.google.maps.event.addListener(document.getElementById("left_frame").contentWindow.google.map, 'bounds_changed', (function () {
+ //    	document.getElementById("right_frame").contentWindow.map.setCenter(document.getElementById("left_frame").contentWindow.map.getCenter());
+	// }));
+</script>
+<frameset cols="50%,50%">
+   <frame id="left_frame" name="left" src="gps_cameras_out.html" />
+   <frame id="right_frame" name="right" src="gps_cloud_out.html" />
+   <noframes>
+   <body>
+      Your browser does not support frames.
+   </body>
+   </noframes>
+</frameset>
+</html>
