@@ -6,7 +6,8 @@ namespace pointcloud_utils
 
     int RANSACRegister(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA,
                 const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
-                Eigen::Matrix4f& Tresult)
+                Eigen::Matrix4f& Tresult,
+		vector<int> &inliers)
     {
         pcl::SampleConsensusModelRegistration<pcl::PointXYZ>::Ptr sac_model(new pcl::SampleConsensusModelRegistration<pcl::PointXYZ>(cloudA));
         sac_model->setInputTarget(cloudB);
@@ -14,12 +15,14 @@ namespace pointcloud_utils
         pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(sac_model);
         //pcl::LeastMedianSquares<pcl::PointXYZ> ransac(sac_model); //might as well try these out too!
         //pcl::ProgressiveSampleConsensus<pcl::PointXYZ> ransac(sac_model);
-        ransac.setDistanceThreshold(8.0);
+        ransac.setDistanceThreshold(7.0);
+	ransac.setProbability(0.999999999);
 
         //upping the verbosity level to see some info
         pcl::console::VERBOSITY_LEVEL vblvl = pcl::console::getVerbosityLevel();
         pcl::console::setVerbosityLevel(pcl::console::L_DEBUG);
         ransac.computeModel(1);
+	ransac.refineModel(3.0,1000);
         pcl::console::setVerbosityLevel(vblvl);
 
         Eigen::VectorXf coeffs;
@@ -27,7 +30,7 @@ namespace pointcloud_utils
         assert(coeffs.size() == 16);
         Tresult = Eigen::Map<Eigen::Matrix4f>(coeffs.data(),4,4);
 
-        vector<int> inliers; ransac.getInliers(inliers);
+        ransac.getInliers(inliers);
         return inliers.size();
     }
 
@@ -53,8 +56,8 @@ namespace pointcloud_utils
 
             pcl::PointCloud<pcl::PointXYZ> cloudA_trans;
             pcl::transformPointCloud<pcl::PointXYZ>(*cloudA, cloudA_trans, T);
-
-            int inliers_num = RANSACRegister(cloudA_trans.makeShared(),cloudB,Tresult);
+	    vector<int> inliers;
+            int inliers_num = RANSACRegister(cloudA_trans.makeShared(),cloudB,Tresult,inliers);
             cout << "RANSAC rigid transform:"<<endl<<Tresult.transpose()<<endl;
             cout << "RANSAC inliers:"<<inliers_num<<endl;
             cout << "------------------------------------------------------------------------" << endl;
@@ -236,10 +239,45 @@ namespace pointcloud_utils
 
    }
 
+
+void icp_AlignClouds(pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_tgt, Eigen::Matrix4f &final_transformation_matrix)
+{
+
+	pcl::PointCloud<pcl::PointXYZ>::Ptr Final (new pcl::PointCloud<pcl::PointXYZ>);
+
+	pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+	icp.setInputCloud(transformed_cloud);
+  	icp.setInputTarget(cloud_tgt);
+
+        //upping the verbosity level to see some info
+        pcl::console::VERBOSITY_LEVEL vblvl = pcl::console::getVerbosityLevel();
+        pcl::console::setVerbosityLevel(pcl::console::L_DEBUG);
+	icp.setMaximumIterations(1);
+	icp.align(*Final);
+        pcl::console::setVerbosityLevel(vblvl);
+
+	for(int i=0;i<10;i++)
+	{
+		cout<<"Source: "<<transformed_cloud->points[i]<<" Target: "<< cloud_tgt->points[i]<<" Transformed:" << Final->points[i] <<endl;
+	}
+
+	std::cout << "has converged:" << icp.hasConverged() << " score: " << icp.getFitnessScore() << std::endl;
+	final_transformation_matrix = icp.getFinalTransformation();
+
+}
+
+
    void register_clouds(vector<Point3D> pcl_CAM, vector<Point3D> pcl_GPS, Eigen::Matrix4f& T, double &scale)
    {
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_CAM (new pcl::PointCloud<pcl::PointXYZ>);
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_GPS (new pcl::PointCloud<pcl::PointXYZ>);
+
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_CAM_in (new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_GPS_in (new pcl::PointCloud<pcl::PointXYZ>);
+
+	pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cameras_t (new pcl::PointCloud<pcl::PointXYZ>());
+	
+	Eigen::Matrix4f final_transformation_matrix;
 
 
         for (size_t i = 0; i < pcl_GPS.size (); ++i)
@@ -265,11 +303,39 @@ namespace pointcloud_utils
         cout<<"cloud size "<<cloud_CAM->points.size()<<endl;
         scale = get_cloud_scale(cloud_CAM,cloud_GPS,true);
         //scale = get_cloud_scale_pca(cloud_CAM,cloud_GPS,true);
-        cout<<"p1 "<<cloud_CAM->points[0]<<endl; getchar();
-        RANSACRegister(cloud_CAM,cloud_GPS,T);
-        cout<<scale<<endl;
+        cout<<"p1: "<<cloud_CAM->points[0]<<endl;
+	vector<int> inliers;
+
+        RANSACRegister(cloud_CAM,cloud_GPS,T,inliers);
+	cout<<"Initial transform: "<<endl<<T.transpose()<<endl;
+
+	/*Getting RANSAC inliers*/
+	for (size_t i = 0; i < inliers.size (); ++i)
+	{
+	       cloud_CAM_in->points.push_back(cloud_CAM->points[inliers[i]]);
+               cloud_GPS_in->points.push_back(cloud_GPS->points[inliers[i]]);
+	}
+
+	//cout<<"new scale "<<get_cloud_scale(cloud_CAM_in,cloud_GPS_in,true)<<endl;	
+
+	/****ICP alignment******/
+
+	//pcl::transformPointCloud(*cloud_CAM_in, *pcl_cameras_t, T.transpose()); //transforming cloud using the coarse estimation
+	//icp_AlignClouds(pcl_cameras_t, cloud_GPS_in,final_transformation_matrix); //fine alignment
+	
+	//cout<<"ICP transform: "<<endl<<final_transformation_matrix<<endl<<endl;
+
+	Eigen::Matrix4f Tf;
+	Tf = T.transpose();
+	T = Tf;
+
+	//T = Tf*final_transformation_matrix;
+
+        //cout<<scale<<endl;
 
    }
+
+
 
 
    void transform_points(Eigen::Matrix4f T, double s, vector<Point3D> &cameras)
@@ -284,9 +350,8 @@ namespace pointcloud_utils
 
        }
 
-       pcl::transformPointCloud(*pcl_cameras, *pcl_cameras_t, T.transpose());
-
-
+       pcl::transformPointCloud(*pcl_cameras, *pcl_cameras_t, T);
+	
 
        for (size_t i = 0; i < cameras.size (); ++i)
        {
@@ -298,7 +363,7 @@ namespace pointcloud_utils
 
        }
 
-       cout<<T.transpose()<<endl;
+       cout<<T<<endl;
 
    }
 

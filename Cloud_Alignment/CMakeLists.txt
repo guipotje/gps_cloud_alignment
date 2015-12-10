@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 project(cloud_align)
-find_package(OpenCV 2.4 REQUIRED)
 
 find_package(PCL 1.7 REQUIRED)
 find_package(PkgConfig)
