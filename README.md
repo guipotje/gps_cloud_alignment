@@ -14,8 +14,8 @@ Required input:
 Output:
 - list of GPS for each point (Latitude Longitude  Altitude)
 
-example: 
-"./cloud_align gps_list.txt camera_list.txt 3dpoints.txt"
+example with files that comes as example: 
+"./cloud_align gps_list camera_list points_pos_list"
 
 the later one can be a sparse set of points or a dense reconstruction by PMVS or CMVS.
 
