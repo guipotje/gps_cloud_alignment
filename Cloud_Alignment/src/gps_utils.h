@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include "pointcloud_utils.h"
-
+#include <boost/math/constants/constants.hpp>
 
 using namespace std;
 
@@ -35,7 +35,7 @@ namespace GPS_Utils
 	const double asq = pow(a,2);
 	const double esq = pow(e,2);
 
-
+	const long double PI = boost::math::constants::pi<long double>();
 
     void ecef2lla(pointcloud_utils::Point3D ecef, LLA &lla);
     void lla2ecef(LLA lla, pointcloud_utils::Point3D &ret);
@@ -44,6 +44,7 @@ namespace GPS_Utils
     vector<LLA> convert_LLA(vector<pointcloud_utils::Point3D> pts_xyz);
     void save(vector<pointcloud_utils::Point3D> gps_list);
     void save_LLA(vector<LLA> lla_list);
+    void save_LLA_RGB(vector<LLA> lla_list, vector<pointcloud_utils::RGB> color_list);
 
 
 }

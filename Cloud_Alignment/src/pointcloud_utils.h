@@ -22,6 +22,7 @@
 #include <sstream>
 #include <math.h>
 #include <string>
+#include <utility>
 
 using namespace std;
 
@@ -42,6 +43,24 @@ namespace pointcloud_utils
              X = _X;
              Y = _Y;
              Z = _Z;
+            }
+
+        };
+
+            class RGB
+        {
+            public:
+            unsigned char R,G,B;
+
+            RGB()
+            {
+            }
+
+            RGB(unsigned char _X, unsigned char _Y, unsigned char _Z)
+            {
+             R = _X;
+             G = _Y;
+             B = _Z;
             }
 
         };
@@ -68,6 +87,11 @@ namespace pointcloud_utils
                         int num_iterations,
                         double iteration_scale_step);
 
+    void FindSimilarityRANSAC(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA,
+                const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
+                Eigen::Matrix4f& Tresult,
+    vector<int> &inliers, double &scale);
+
     double norm_L2(pcl::PointXYZ p1, pcl::PointXYZ p2);
 
     double get_cloud_scale_pca(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA,
@@ -81,9 +105,13 @@ namespace pointcloud_utils
                         );
 
      vector<Point3D> read_point_list(string filename);
+     vector<Point3D> read_pset(string filename);
+     pair<vector<Point3D>,vector<RGB> > read_ply(string filename);
      void save_ply(vector<Point3D> cam_list);
+     void save_registered_ply(vector<Point3D> GPS_list, vector<Point3D> cam_list);
      void icp_AlignClouds(pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_tgt, Eigen::Matrix4f &final_transformation_matrix);
      void register_clouds(vector<Point3D> pcl_CAM, vector<Point3D> pcl_GPS, Eigen::Matrix4f& T, double &scale);
      void transform_points(Eigen::Matrix4f T, double s, vector<Point3D> &cameras);/*transform points given an affine T matrix*/
+     void transform_points_double(Eigen::Matrix4f T, double s, vector<Point3D> &cameras);
 
 }

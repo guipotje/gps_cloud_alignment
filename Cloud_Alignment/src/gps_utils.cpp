@@ -3,6 +3,7 @@
 
 namespace GPS_Utils
 {
+
     void ecef2lla(pointcloud_utils::Point3D ecef, LLA &lla) /*Converts ECEF to Latitude Longitude and Altitude*/
     {
       double x = ecef.X;
@@ -20,13 +21,13 @@ namespace GPS_Utils
       double N = a/( sqrt(1-esq*pow(sin(lat),2)) );
       double alt = p / cos(lat) - N;
 
-      // mod lat to 0-2M_PI
-       //lon = lon % (2*M_PI);
-      lon = fmod(lon,2*M_PI);
+      // mod lat to 0-2PI
+       //lon = lon % (2*PI);
+      lon = fmod(lon,2*PI);
       // correction for altitude near poles left out.
 
-      lla.lat = lat*(180.0/M_PI);
-      lla.longit = lon*(180.0/M_PI);
+      lla.lat = lat*(180.0/PI);
+      lla.longit = lon*(180.0/PI);
       lla.alt = alt;
 
 
@@ -35,8 +36,8 @@ namespace GPS_Utils
 
     void lla2ecef(LLA lla, pointcloud_utils::Point3D &ret) /*Converts Latitude Longitude and Altitude to ECEF*/
     {
-      double lat = lla.lat*(M_PI/180.0);
-      double lon = lla.longit*(M_PI/180.0);
+      double lat = lla.lat*(PI/180.0);
+      double lon = lla.longit*(PI/180.0);
       double alt = lla.alt;
 
       double N = a / sqrt(1 - esq * pow(sin(lat),2) );
@@ -63,7 +64,7 @@ namespace GPS_Utils
 
         while(!myfile.eof())
         {
-            gps_list.push_back(LLA(lat,lon,alt));
+            gps_list.push_back(LLA(-lat,-lon,alt));
             myfile>>lat>>lon>>alt;
 
         }
@@ -150,6 +151,18 @@ namespace GPS_Utils
 
          fclose(f);
 
+
+    }
+
+    void save_LLA_RGB(vector<LLA> lla_list, vector<pointcloud_utils::RGB> color_list)
+    {
+   
+         FILE *f = fopen("points_lat_lon_alt_rgb.txt", "w");
+
+         for(unsigned int i=0; i<lla_list.size();i++)
+            fprintf(f,"%.12f %.12f %.12f %d %d %d\n",lla_list[i].lat, lla_list[i].longit, lla_list[i].alt, color_list[i].R, color_list[i].G, color_list[i].B);
+
+         fclose(f);
 
     }
 

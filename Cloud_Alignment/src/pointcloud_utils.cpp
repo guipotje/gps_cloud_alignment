@@ -15,14 +15,14 @@ namespace pointcloud_utils
         pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(sac_model);
         //pcl::LeastMedianSquares<pcl::PointXYZ> ransac(sac_model); //might as well try these out too!
         //pcl::ProgressiveSampleConsensus<pcl::PointXYZ> ransac(sac_model);
-        ransac.setDistanceThreshold(7.0);
-	ransac.setProbability(0.999999999);
+        ransac.setDistanceThreshold(4.0);
+	      ransac.setProbability(0.99999);
 
         //upping the verbosity level to see some info
         pcl::console::VERBOSITY_LEVEL vblvl = pcl::console::getVerbosityLevel();
-        pcl::console::setVerbosityLevel(pcl::console::L_DEBUG);
+        //pcl::console::setVerbosityLevel(pcl::console::L_DEBUG);
         ransac.computeModel(1);
-	ransac.refineModel(3.0,1000);
+	      ransac.refineModel(3.0,1000);
         pcl::console::setVerbosityLevel(vblvl);
 
         Eigen::VectorXf coeffs;
@@ -32,6 +32,103 @@ namespace pointcloud_utils
 
         ransac.getInliers(inliers);
         return inliers.size();
+    }
+
+    void FindSimilarityRANSAC(const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudA,
+                const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloudB,
+                Eigen::Matrix4f& Tresult,
+    vector<int> &inliers, double &scale)
+    {
+      int iteration_step = 10;
+      int num_iters = 7;
+      vector<pair<int,double> > bins(iteration_step+1);
+
+      double init_scale = scale;
+
+      int best_dude = -1;
+      int best_idx;
+
+      double low = init_scale - init_scale*0.5;
+      double high = init_scale + init_scale*0.5;
+
+     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_As (new pcl::PointCloud<pcl::PointXYZ>());
+
+     for(size_t i =0; i < cloudA->points.size();i++)
+       cloud_As->points.push_back(cloudA->points[i]);
+
+
+      for(int i=0;i<num_iters;i++)
+      {
+        double delta = (high-low)/(double)iteration_step;
+
+        printf("low:%.5f high:%.5f\n",low,high);
+
+        for(int j=0;j<=iteration_step;j++)
+        {
+
+          double loc_scale = low + delta*j;
+
+            for(size_t k =0; k < cloudA->points.size();k++)
+           {
+            cloud_As->points[k].x = cloudA->points[k].x*loc_scale;
+            cloud_As->points[k].y = cloudA->points[k].y*loc_scale;
+            cloud_As->points[k].z = cloudA->points[k].z*loc_scale;
+
+           }
+
+          bins[j].first = RANSACRegister(cloud_As,cloudB,Tresult,inliers);
+          bins[j].second = loc_scale;
+
+          printf("Found %d inliers with scale %.5f\n",bins[j].first, bins[j].second);
+
+        }
+
+         best_dude = -1;
+
+        for(int j=0;j<bins.size();j++)
+          if(bins[j].first > best_dude)
+          {
+            best_dude = bins[j].first;
+            best_idx = j;
+          }
+
+        if(best_idx >0 && best_idx < bins.size())
+        {
+          low = bins[best_idx-1].second;
+          high = bins[best_idx+1].second;
+        }
+        else if(best_idx==0)
+        {
+          low = bins[best_idx].second;
+          high = bins[best_idx+1].second;
+        }
+        else
+        {
+          low = bins[best_idx-1].second;
+          high = bins[best_idx].second;
+        }
+
+
+        for(int j=0;j<bins.size();j++)
+          printf("%d ",bins[j].first);
+
+        printf("\n");
+        //getchar();
+
+      }
+
+      scale = bins[best_idx].second;
+
+      for(size_t i =0; i < cloudA->points.size();i++)
+      {
+        cloudA->points[i].x*=scale;
+        cloudA->points[i].y*=scale;
+        cloudA->points[i].z*=scale;
+      }
+
+
+      cout<<"Best model has "<< RANSACRegister(cloudA,cloudB,Tresult,inliers) << " inliers"<<endl;
+
     }
 
 
@@ -81,6 +178,8 @@ namespace pointcloud_utils
                         int num_iterations,
                         double iteration_scale_step)
     {
+
+
         pcl::PCA<pcl::PointXYZ> pca;
         pca.setInputCloud(cloudA);
         Eigen::Vector4f v_A_mu = pca.getMean();
@@ -174,6 +273,8 @@ namespace pointcloud_utils
 
           }
 
+        cout<<"Found scale: "<<s<<endl;
+        getchar();
 
         return s;
     }
@@ -194,8 +295,58 @@ namespace pointcloud_utils
             myfile>>x>>y>>z;
 
         }
-        isnan(x);
         return cam_list;
+    }
+
+        vector<Point3D> read_pset(string filename)
+    {
+        vector<Point3D> point_set;
+
+        ifstream myfile (filename.c_str());
+        double x,y,z,nx,ny,nz;
+
+        myfile>>x>>y>>z>>nx>>ny>>nz;
+
+        while(!myfile.eof())
+        {
+            point_set.push_back(Point3D(x,y,z));
+            myfile>>x>>y>>z>>nx>>ny>>nz;
+
+        }
+        return point_set;
+    }
+
+      pair<vector<Point3D>,vector<RGB> > read_ply(string filename)
+    {
+
+        vector<Point3D> point_set;
+        vector<RGB> color_set;
+
+        ifstream myfile (filename.c_str());
+        double x,y,z,nx,ny,nz,r,g,b;
+
+        string aux;
+
+        myfile>>aux;
+
+        while (!myfile.eof() && aux != "end_header")
+        {
+          myfile>>aux;
+          cout<<aux;
+        }
+
+
+        myfile>>x>>y>>z>>nx>>ny>>nz>>r>>g>>b;
+
+        while(!myfile.eof())
+        {
+            point_set.push_back(Point3D(x,y,z));
+            color_set.push_back(RGB(r,g,b));
+            myfile>>x>>y>>z>>nx>>ny>>nz>>r>>g>>b;
+
+        }
+
+        return make_pair(point_set,color_set);
     }
 
 
@@ -236,6 +387,49 @@ namespace pointcloud_utils
 
        fclose(f);
 
+
+   }
+
+    void save_registered_ply(vector<Point3D> GPS_list, vector<Point3D> cam_list)
+   {
+   static char ply_header[] =
+   "ply\n"
+   "format ascii 1.0\n"
+   "element face 0\n"
+   "property list uchar int vertex_indices\n"
+   "element vertex %ld\n"
+   "property double x\n"
+   "property double y\n"
+   "property double z\n"
+   "property uchar diffuse_red\n"
+   "property uchar diffuse_green\n"
+   "property uchar diffuse_blue\n"
+   "end_header\n";
+   long num_points_out = cam_list.size()*2;
+
+   FILE *f = fopen("registered_cameras.ply", "w");
+
+       /* Print the ply header */
+       fprintf(f, ply_header, num_points_out);
+
+       /* X Y Z R G B for each line*/
+       for(unsigned int i=0;i<cam_list.size();i++)
+       {
+           Point3D pt3d1 = GPS_list[i];
+           Point3D pt3d2 = cam_list[i];
+
+           unsigned char R,G,B;
+
+           R = rand()%256;
+           G = rand()%256;
+           B = rand()%256;
+
+          fprintf(f,"%.12f %.12f %.12f %d %d %d\n",pt3d1.X, pt3d1.Y, pt3d1.Z,R,G,B);
+          fprintf(f,"%.12f %.12f %.12f %d %d %d\n",pt3d2.X, pt3d2.Y, pt3d2.Z,R,G,B);
+
+       }
+
+       fclose(f);
 
    }
 
@@ -301,20 +495,28 @@ void icp_AlignClouds(pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud, pcl:
        */
 
         cout<<"cloud size "<<cloud_CAM->points.size()<<endl;
-        scale = get_cloud_scale(cloud_CAM,cloud_GPS,true);
+        scale = get_cloud_scale(cloud_CAM,cloud_GPS,false);
         //scale = get_cloud_scale_pca(cloud_CAM,cloud_GPS,true);
         cout<<"p1: "<<cloud_CAM->points[0]<<endl;
-	vector<int> inliers;
+	       vector<int> inliers;
 
-        RANSACRegister(cloud_CAM,cloud_GPS,T,inliers);
-	cout<<"Initial transform: "<<endl<<T.transpose()<<endl;
+        //cout<<"found "<< RANSACRegister(cloud_CAM,cloud_GPS,T,inliers) << " inliers."<<endl;
+         FindSimilarityRANSAC(cloud_CAM,cloud_GPS,T,inliers,scale);
+	       cout<<"Initial transform: "<<endl<<T.transpose()<<endl;
 
 	/*Getting RANSAC inliers*/
 	for (size_t i = 0; i < inliers.size (); ++i)
 	{
 	       cloud_CAM_in->points.push_back(cloud_CAM->points[inliers[i]]);
-               cloud_GPS_in->points.push_back(cloud_GPS->points[inliers[i]]);
+         cloud_GPS_in->points.push_back(cloud_GPS->points[inliers[i]]);
 	}
+
+  vector<Point3D> gps_inliers;
+
+  for (size_t i = 0; i < cloud_GPS_in->points.size (); ++i)
+     gps_inliers.push_back(Point3D(cloud_GPS_in->points[i].x,cloud_GPS_in->points[i].y,cloud_GPS_in->points[i].z));
+
+  //save_ply(gps_inliers); //test if points are OK
 
 	//cout<<"new scale "<<get_cloud_scale(cloud_CAM_in,cloud_GPS_in,true)<<endl;	
 
@@ -337,6 +539,31 @@ void icp_AlignClouds(pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud, pcl:
 
 
 
+   void transform_points_double(Eigen::Matrix4f T, double s, vector<Point3D> &cameras)
+   {
+     for (size_t i = 0; i < cameras.size (); ++i)
+       {
+
+          double X,Y,Z;
+
+          cameras[i].X = cameras[i].X*s;
+          cameras[i].Y = cameras[i].Y*s;
+          cameras[i].Z = cameras[i].Z*s;
+
+          X = (double)T(0,0)*cameras[i].X + (double)T(0,1)*cameras[i].Y + (double)T(0,2)*cameras[i].Z + (double)T(0,3);        
+          Y = (double)T(1,0)*cameras[i].X + (double)T(1,1)*cameras[i].Y + (double)T(1,2)*cameras[i].Z + (double)T(1,3);         
+          Z = (double)T(2,0)*cameras[i].X + (double)T(2,1)*cameras[i].Y + (double)T(2,2)*cameras[i].Z + (double)T(2,3);
+
+          cameras[i].X = X;
+          cameras[i].Y = Y;
+          cameras[i].Z = Z;
+
+          //printf("%.5f %.5f %.5f\n",X,Y,Z);
+
+          //if(i%100==0)
+          //  getchar();
+       }
+   }
 
    void transform_points(Eigen::Matrix4f T, double s, vector<Point3D> &cameras)
    {
