@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include "src/gps_utils.h"
+#include "src/similarity_transf.h"
 
 
 
@@ -36,7 +37,8 @@ int main(int argc, char *argv[])
     bool colored = false;
 
     double scale;
-    Eigen::Matrix4f T;
+    Eigen::Matrix4f _T;
+    
 
     cloud_cam = pointcloud_utils::read_point_list(cams); //reading cameras
 
@@ -57,14 +59,43 @@ int main(int argc, char *argv[])
     }
 
     cloud_gps = GPS_Utils::convert_XYZ(GPS_Utils::read_gps_list(gps)); //reading GPS and converting to ECEF xyz
-    pointcloud_utils::register_clouds(cloud_cam, cloud_gps,T,scale); //registering the model frame to the ECEF frame
+
+    vector<int> inliers = pointcloud_utils::register_clouds(cloud_cam, cloud_gps,_T,scale); //get inliers using RANSAC and approximate similarity t
+    pointcloud_utils::filter_outliers(cloud_cam,cloud_gps,inliers);
+
+    std::vector<Eigen::Vector3d> e_cam = pointcloud_utils::cvt_to_Eigen(cloud_cam);
+    std::vector<Eigen::Vector3d> e_gps = pointcloud_utils::cvt_to_Eigen(cloud_gps);
+
+     Eigen::Matrix <double,3,4> T = similarity_transf::AlignPointsEigen(e_cam,e_gps); //least squares using only inliers
+     cout<<"Residual: "<< similarity_transf::media(similarity_transf::compute_residuals_eigen(e_cam,e_gps,T)) <<endl;
 
     /*Apply transformation and converts cameras and points to GPS LLA*/
-    pointcloud_utils::transform_points_double(T,scale,cloud_cam);
-    pointcloud_utils::transform_points_double(T,scale,cloud_points);
+
+    //pointcloud_utils::transform_points_double(T,scale,cloud_cam);
+    //pointcloud_utils::transform_points_double(T,scale,cloud_points);
+
+     std::vector<Eigen::Vector3d> t_cam = similarity_transf::transform_points(e_cam,T);
+     std::vector<Eigen::Vector3d> t_pts = similarity_transf::transform_points(pointcloud_utils::cvt_to_Eigen(cloud_points),T);
+
+     cloud_cam = pointcloud_utils::cvt_to_PointCloud(t_cam);
+     cloud_points = pointcloud_utils::cvt_to_PointCloud(t_pts);
+
+
+   /* for(size_t i=0; i< cloud_points.size(); i++)
+    {
+            printf("%.8f %.8f %.8f\n",cloud_points[i].X,cloud_points[i].Y,cloud_points[i].Z);
+
+            if(i%100 ==0)
+                getchar();
+    }
+    */
 
     /*save registered ply to check alignment quality*/
     pointcloud_utils::save_registered_ply(cloud_gps, cloud_cam);
+
+    if(colored)
+        pointcloud_utils::save_ply_color(cloud_points, color_list);
+
 
     //pointcloud_utils::save_ply(cloud_points); //test if points are OK
 

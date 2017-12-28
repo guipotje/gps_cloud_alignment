@@ -133,7 +133,7 @@ namespace GPS_Utils
             pointcloud_utils::Point3D pt3d = gps_list[i];
 
 
-            fprintf(f,"%.12f %.12f %.12f 0 255 0\n",pt3d.X, pt3d.Y, pt3d.Z);
+            fprintf(f,"%.12f %.12f %.12f 0 255 0\n",pt3d.X- 4320000, pt3d.Y+4160000, pt3d.Z + 2150000);
 
         }
 

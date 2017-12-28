@@ -15,7 +15,7 @@ namespace pointcloud_utils
         pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(sac_model);
         //pcl::LeastMedianSquares<pcl::PointXYZ> ransac(sac_model); //might as well try these out too!
         //pcl::ProgressiveSampleConsensus<pcl::PointXYZ> ransac(sac_model);
-        ransac.setDistanceThreshold(4.0);
+        ransac.setDistanceThreshold(3.0);
 	      ransac.setProbability(0.99999);
 
         //upping the verbosity level to see some info
@@ -274,7 +274,7 @@ namespace pointcloud_utils
           }
 
         cout<<"Found scale: "<<s<<endl;
-        getchar();
+        //getchar();
 
         return s;
     }
@@ -332,7 +332,7 @@ namespace pointcloud_utils
         while (!myfile.eof() && aux != "end_header")
         {
           myfile>>aux;
-          cout<<aux;
+          //cout<<aux;
         }
 
 
@@ -390,6 +390,41 @@ namespace pointcloud_utils
 
    }
 
+   void save_ply_color(vector<Point3D> cam_list, vector<pointcloud_utils::RGB> rgb)
+   {
+   static char ply_header[] =
+   "ply\n"
+   "format ascii 1.0\n"
+   "element face 0\n"
+   "property list uchar int vertex_indices\n"
+   "element vertex %ld\n"
+   "property double x\n"
+   "property double y\n"
+   "property double z\n"
+   "property uchar diffuse_red\n"
+   "property uchar diffuse_green\n"
+   "property uchar diffuse_blue\n"
+   "end_header\n";
+   long num_points_out = cam_list.size();
+
+   FILE *f = fopen("dense_points.ply", "w");
+
+       /* Print the ply header */
+       fprintf(f, ply_header, num_points_out);
+
+       /* X Y Z R G B for each line*/
+
+       for(unsigned int i=0;i<cam_list.size();i++)
+       {
+           Point3D pt3d = cam_list[i];
+           fprintf(f,"%.12f %.12f %.12f %d %d %d\n",pt3d.X - 4320000, pt3d.Y +4160000, pt3d.Z + 2150000,rgb[i].R,rgb[i].G,rgb[i].B);
+       }
+
+       fclose(f);
+
+   }
+
+
     void save_registered_ply(vector<Point3D> GPS_list, vector<Point3D> cam_list)
    {
    static char ply_header[] =
@@ -412,6 +447,18 @@ namespace pointcloud_utils
        /* Print the ply header */
        fprintf(f, ply_header, num_points_out);
 
+       double mx,my,mz = 0;
+
+        for(unsigned int i=0;i<cam_list.size();i++)
+       {
+          mx+=cam_list[i].X;
+          my+=cam_list[i].Y;
+          mz+=cam_list[i].Z;
+       }
+       mx/=(double)cam_list.size();
+       my/=(double)cam_list.size();
+       mz/=(double)cam_list.size();
+
        /* X Y Z R G B for each line*/
        for(unsigned int i=0;i<cam_list.size();i++)
        {
@@ -424,8 +471,8 @@ namespace pointcloud_utils
            G = rand()%256;
            B = rand()%256;
 
-          fprintf(f,"%.12f %.12f %.12f %d %d %d\n",pt3d1.X, pt3d1.Y, pt3d1.Z,R,G,B);
-          fprintf(f,"%.12f %.12f %.12f %d %d %d\n",pt3d2.X, pt3d2.Y, pt3d2.Z,R,G,B);
+          fprintf(f,"%.5f %.5f %.5f %d %d %d\n",pt3d1.X-mx, pt3d1.Y-my, pt3d1.Z-mz,R,G,B);
+          fprintf(f,"%.5f %.5f %.5f %d %d %d\n",pt3d2.X-mx, pt3d2.Y-my, pt3d2.Z-mz,R,G,B);
 
        }
 
@@ -461,7 +508,7 @@ void icp_AlignClouds(pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud, pcl:
 }
 
 
-   void register_clouds(vector<Point3D> pcl_CAM, vector<Point3D> pcl_GPS, Eigen::Matrix4f& T, double &scale)
+   vector<int> register_clouds(vector<Point3D> pcl_CAM, vector<Point3D> pcl_GPS, Eigen::Matrix4f& T, double &scale)
    {
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_CAM (new pcl::PointCloud<pcl::PointXYZ>);
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_GPS (new pcl::PointCloud<pcl::PointXYZ>);
@@ -535,6 +582,8 @@ void icp_AlignClouds(pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud, pcl:
 
         //cout<<scale<<endl;
 
+  return inliers;
+
    }
 
 
@@ -593,6 +642,45 @@ void icp_AlignClouds(pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud, pcl:
        cout<<T<<endl;
 
    }
+
+   std::vector<Eigen::Vector3d> cvt_to_Eigen(vector<pointcloud_utils::Point3D> src)
+   {
+      std::vector<Eigen::Vector3d> dst (src.size());
+
+      for(size_t i=0;i< src.size();i++)
+      {
+        dst[i] = Eigen::Vector3d(src[i].X,src[i].Y,src[i].Z);
+      }
+
+      return dst;
+   }
+
+   std::vector<pointcloud_utils::Point3D> cvt_to_PointCloud(std::vector<Eigen::Vector3d> src)
+   {
+      std::vector<pointcloud_utils::Point3D> dst (src.size());
+
+      for(size_t i=0;i< src.size();i++)
+      {
+        dst[i] = pointcloud_utils::Point3D(src[i](0),src[i](1),src[i](2));
+      }
+
+      return dst;
+   }
+
+  void filter_outliers(vector<Point3D> &points1, vector<Point3D> &points2, vector<int> inliers)
+  {
+    vector<Point3D> out1, out2;
+
+    for(size_t i=0; i< inliers.size();i++)
+    {
+      out1.push_back(points1[inliers[i]]);
+      out2.push_back(points2[inliers[i]]);
+    }
+
+    points1 = out1;
+    points2 = out2;
+  }
+
 
 
 } //END namespace

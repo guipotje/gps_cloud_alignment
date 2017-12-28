@@ -108,10 +108,14 @@ namespace pointcloud_utils
      vector<Point3D> read_pset(string filename);
      pair<vector<Point3D>,vector<RGB> > read_ply(string filename);
      void save_ply(vector<Point3D> cam_list);
+     void save_ply_color(vector<Point3D> cam_list, vector<pointcloud_utils::RGB> rgb);
      void save_registered_ply(vector<Point3D> GPS_list, vector<Point3D> cam_list);
      void icp_AlignClouds(pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_tgt, Eigen::Matrix4f &final_transformation_matrix);
-     void register_clouds(vector<Point3D> pcl_CAM, vector<Point3D> pcl_GPS, Eigen::Matrix4f& T, double &scale);
+     vector<int> register_clouds(vector<Point3D> pcl_CAM, vector<Point3D> pcl_GPS, Eigen::Matrix4f& T, double &scale);
      void transform_points(Eigen::Matrix4f T, double s, vector<Point3D> &cameras);/*transform points given an affine T matrix*/
      void transform_points_double(Eigen::Matrix4f T, double s, vector<Point3D> &cameras);
+     std::vector<Eigen::Vector3d> cvt_to_Eigen(vector<pointcloud_utils::Point3D> src);
+     std::vector<pointcloud_utils::Point3D> cvt_to_PointCloud(std::vector<Eigen::Vector3d> src);
+     void filter_outliers(vector<Point3D> &points1, vector<Point3D> &points2, vector<int> inliers);
 
 }
