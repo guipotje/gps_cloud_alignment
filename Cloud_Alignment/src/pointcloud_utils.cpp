@@ -15,7 +15,7 @@ namespace pointcloud_utils
         pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(sac_model);
         //pcl::LeastMedianSquares<pcl::PointXYZ> ransac(sac_model); //might as well try these out too!
         //pcl::ProgressiveSampleConsensus<pcl::PointXYZ> ransac(sac_model);
-        ransac.setDistanceThreshold(3.0);
+        ransac.setDistanceThreshold(4.0);
 	      ransac.setProbability(0.99999);
 
         //upping the verbosity level to see some info
